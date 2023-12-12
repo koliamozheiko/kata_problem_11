@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
@@ -22,11 +21,6 @@ public class AdminController {
 
     @GetMapping()
     public String userList(Model model, Authentication authentication) {
-        if (userService.findByUsername(authentication.getName()) != null) {
-            if (!userService.findByUsername(authentication.getName()).getRoles().toString().contains("ROLE_ADMIN")) {
-                return "redirect:user?id=" + userService.findByUsername(authentication.getName()).getId();
-            }
-        }
         model.addAttribute("user", userService.findByUsername(authentication.getName()));
         model.addAttribute("allUsers", userService.allUsers());
         return "admin";

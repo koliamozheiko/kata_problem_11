@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    @Lazy
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -44,8 +43,6 @@ public class UserServiceImpl implements UserService {
         if (user == null ) {
             throw new UsernameNotFoundException(String.format("User '%s' not found", email));
         }
-
-        Hibernate.initialize(user.getRoles());
         return user;
     }
     @Override
@@ -81,11 +78,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public boolean updateUser(User user) {
-        if (userRepository.findByUsername(user.getUsername()) != null) {
-            if (userRepository.findByUsername(user.getUsername()).getId() != user.getId()) {
-                return false;
-            }
-        }
         if (!user.getPassword().equals(userRepository.findByUsername(user.getUsername()).getPassword())) {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }

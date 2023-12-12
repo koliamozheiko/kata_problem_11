@@ -16,15 +16,10 @@ import java.util.List;
 
 @Controller
 public class RegistrationController {
-    private UserService userService;
-    private RoleRepository roleRepository;
+    private final UserService userService;
 
     @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
-    @Autowired
-    public void setUserService(UserService userService) {
+    public RegistrationController(UserService userService) {
         this.userService = userService;
     }
 
