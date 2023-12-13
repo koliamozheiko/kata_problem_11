@@ -21,13 +21,13 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final PasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleService roleService, PasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
             return true;
         }
 
-        user.addRole(roleRepository.findByName("ROLE_USER"));
+        user.addRole(roleService.findByName("ROLE_USER"));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return false;
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public boolean updateUser(User user) {
-        if (!user.getPassword().equals(userRepository.findByUsername(user.getUsername()).getPassword())) {
+        if (!user.getPassword().equals(findUserById(user.getId()).getPassword())) {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }
 
